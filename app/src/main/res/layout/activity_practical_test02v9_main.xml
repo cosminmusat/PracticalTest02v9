@@ -25,6 +25,12 @@
         android:layout_height="wrap_content"
         android:text="Search" />
 
+    <Button
+        android:id="@+id/map_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Show Map" />
+
     <TextView
         android:id="@+id/result_text"
         android:layout_width="match_parent"

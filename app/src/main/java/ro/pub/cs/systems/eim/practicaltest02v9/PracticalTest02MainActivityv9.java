@@ -47,11 +47,17 @@ public class PracticalTest02MainActivityv9 extends AppCompatActivity {
         minLengthInput = findViewById(R.id.min_length_input);
         resultText = findViewById(R.id.result_text);
         Button searchButton = findViewById(R.id.search_button);
+        Button mapButton = findViewById(R.id.map_button);
 
         searchButton.setOnClickListener(v -> {
             String word = wordInput.getText().toString();
             int minLength = Integer.parseInt(minLengthInput.getText().toString());
             executorService.execute(new FetchAnagramsTask(word, minLength));
+        });
+
+        mapButton.setOnClickListener(v -> {
+            Intent intent = new Intent(PracticalTest02MainActivityv9.this, MapActivity.class);
+            startActivity(intent);
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -101,6 +107,7 @@ public class PracticalTest02MainActivityv9 extends AppCompatActivity {
                     if (anagram.length() >= minLength) {
                         result.append(anagram).append("\n");
                         Log.d(TAG, "Parsed anagram: " + anagram);
+                        break; // Stop after the first valid anagram
                     }
                 }
             } catch (Exception e) {
@@ -122,9 +129,12 @@ public class PracticalTest02MainActivityv9 extends AppCompatActivity {
             if (intent != null && intent.hasExtra("anagrams")) {
                 String anagrams = intent.getStringExtra("anagrams");
                 Log.d(TAG, "Received anagrams: " + anagrams);
-                // Update the UI
-                TextView resultText = ((Activity) context).findViewById(R.id.result_text);
-                resultText.setText(anagrams);
+                // Update the UI on the main thread
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    Activity activity = (Activity) context;
+                    TextView resultText = activity.findViewById(R.id.result_text);
+                    resultText.setText(anagrams);
+                });
             }
         }
     }
